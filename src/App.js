@@ -23,16 +23,15 @@ export default function App() {
 
   const handleCheck = () => {
     setText(input);
-    const check = [...checkedWord];
     if (match) {
-      check.push(input);
+      console.log("in match", match);
+      setCheckedWord([...checkedWord, text]);
     } else {
       setIsMatched(true);
       setTimeout(() => {
         setIsMatched(false);
       }, 3000);
     }
-    setCheckedWord(check);
     setInput("");
     setMatch(false);
   };

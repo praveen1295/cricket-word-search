@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 
 export default function Gridbox({ alphabet, input, match, setMatch, text }) {
   const [wordColor, setwordColor] = useState([]);
-
   const [data, setData] = useState([]);
 
   let arr = [];
@@ -57,7 +56,7 @@ export default function Gridbox({ alphabet, input, match, setMatch, text }) {
     // eslint-disable-next-line
     C = alphabet.length;
     patternSearch(data, text);
-  }, [alphabet, text]);
+  }, [alphabet, text, match]);
 
   return (
     <div style={{ padding: "10px" }}>
