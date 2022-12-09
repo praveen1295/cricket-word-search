@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import GridBox from "./components/Gridbox.js";
 
 export default function App() {
+  const [text, setText] = useState("");
   const [data, setData] = useState([]);
   const [words, setWords] = useState([]);
   const [select, setSelect] = useState(0);
@@ -21,6 +22,7 @@ export default function App() {
   };
 
   const handleCheck = () => {
+    setText(input);
     const check = [...checkedWord];
     if (match) {
       check.push(input);
@@ -32,7 +34,7 @@ export default function App() {
     }
     setCheckedWord(check);
     setInput("");
-    // setMatch(false);
+    setMatch(false);
   };
   useEffect(() => {
     const findWord = { ...data[select] };
@@ -95,6 +97,7 @@ export default function App() {
           <div className="box">
             {alphabet && (
               <GridBox
+                text={text}
                 alphabet={alphabet}
                 input={input}
                 match={match}

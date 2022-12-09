@@ -1,7 +1,7 @@
 import "../App.css";
 import React, { useState, useEffect } from "react";
 
-export default function Gridbox({ alphabet, input, match, setMatch }) {
+export default function Gridbox({ alphabet, input, match, setMatch, text }) {
   const [wordColor, setwordColor] = useState([]);
 
   const [data, setData] = useState([]);
@@ -51,12 +51,13 @@ export default function Gridbox({ alphabet, input, match, setMatch }) {
   }
 
   useEffect(() => {
-    setData(arr); // eslint-disable-next-line
+    setData(arr);
+    // eslint-disable-next-line
     R = data.length !== 0 && alphabet[0].length;
     // eslint-disable-next-line
     C = alphabet.length;
-    patternSearch(data, input);
-  }, [alphabet, input]);
+    patternSearch(data, text);
+  }, [alphabet, text]);
 
   return (
     <div style={{ padding: "10px" }}>
@@ -83,7 +84,7 @@ export default function Gridbox({ alphabet, input, match, setMatch }) {
                   className="letter"
                   key={idx}
                   style={{
-                    backgroundColor: bg ? "red" : "white",
+                    backgroundColor: bg ? "yellow" : "white",
                   }}
                 >
                   {char}
