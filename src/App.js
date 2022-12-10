@@ -102,11 +102,22 @@ export default function App() {
         setMatch(true);
       }, 3000);
     }
+    setText("");
   };
   return (
     <div className="App">
       {!match && (
-        <div style={{ width: "100%", background: "red" }}>Not Found</div>
+        <div
+          style={{
+            width: "100%",
+            background: "red",
+            padding: "20px",
+            color: "white",
+            fontSize: "16px",
+          }}
+        >
+          Not Matched
+        </div>
       )}
       <h1>Cricket word Search</h1>
       <div className="container">
