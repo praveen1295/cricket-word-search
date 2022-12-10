@@ -1,17 +1,17 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import GridBox from "./components/Gridbox.js";
-
 export default function App() {
-  const [text, setText] = useState("");
   const [data, setData] = useState([]);
   const [words, setWords] = useState([]);
   const [select, setSelect] = useState(0);
   const [alphabet, setAlphabet] = useState([]);
   const [input, setInput] = useState("");
   const [checkedWord, setCheckedWord] = useState([]);
-  const [match, setMatch] = useState(false);
-  const [isMatched, setIsMatched] = useState(false);
+  const [match, setMatch] = useState(true);
+  const [wordColor, setwordColor] = useState([]);
+  const [gridData, setGridData] = useState([]);
+  const [text, setText] = useState("");
 
   const getData = async () => {
     const response = await fetch("wordsearch.json");
@@ -21,38 +21,92 @@ export default function App() {
     setAlphabet(newData.puzzle[0].Alphabet_grid);
   };
 
-  const handleCheck = () => {
-    setText(input);
-    if (match) {
-      console.log("in match", match);
-      setCheckedWord([...checkedWord, text]);
-    } else {
-      setIsMatched(true);
-      setTimeout(() => {
-        setIsMatched(false);
-      }, 3000);
-    }
-    setInput("");
-    setMatch(false);
-  };
+  useEffect(() => {
+    getData();
+    // eslint-disable-next-line
+  }, []);
+
   useEffect(() => {
     const findWord = { ...data[select] };
     const findAlphabet = { ...data[select] };
     setWords(findWord.find_words);
     setAlphabet(findAlphabet.Alphabet_grid);
+    setwordColor([]);
     // eslint-disable-next-line
   }, [select]);
 
   useEffect(() => {
-    getData();
-  }, []);
+    setGridData(arr);
+    // eslint-disable-next-line
+  }, [text]);
 
+  let arr = [];
+  // eslint-disable-next-line
+  const aa =
+    alphabet &&
+    alphabet.map((str) => {
+      arr = [...arr, str.split("")];
+      return str;
+    });
+  let R = gridData.length !== 0 && alphabet[0].length;
+  let C = alphabet && alphabet.length;
+  let x = [-1, -1, -1, 0, 0, 1, 1, 1];
+  let y = [-1, 0, 1, -1, 1, -1, 0, 1];
+  function search2D(grid, row, col, word) {
+    if (grid[row][col] !== word[0]) return false;
+    let len = word.length;
+    for (let dir = 0; dir < 8; dir++) {
+      let store = [];
+      store.push(`${row}-${col}`);
+      let k,
+        rd = row + x[dir],
+        cd = col + y[dir];
+      for (k = 1; k < len; k++) {
+        if (rd >= R || rd < 0 || cd >= C || cd < 0) break;
+        if (grid[rd][cd] !== word[k]) break;
+        store.push(`${rd}-${cd}`);
+        rd += x[dir];
+        cd += y[dir];
+      }
+      if (k === len) {
+        setwordColor([...wordColor, ...store]);
+        return true;
+      }
+    }
+    return false;
+  }
+  function patternSearch(grid, word) {
+    for (let row = 0; row < R; row++) {
+      for (let col = 0; col < C; col++) {
+        if (search2D(grid, row, col, word)) {
+          setCheckedWord([...checkedWord, text]);
+          setMatch(true);
+        }
+      }
+    }
+  }
+
+  const handleComplete = () => {
+    if (words.length === checkedWord.length) return true;
+  };
+  const handleSubmit = () => {
+    setInput(text);
+    if (words.some((w) => w === text)) {
+      patternSearch(gridData, text);
+      if (handleComplete()) {
+        alert("Hurray");
+      }
+    } else {
+      setMatch(false);
+      setTimeout(() => {
+        setMatch(true);
+      }, 3000);
+    }
+  };
   return (
     <div className="App">
-      {isMatched && (
-        <div style={{ padding: "10px", backgroundColor: "red" }}>
-          word is not matched
-        </div>
+      {!match && (
+        <div style={{ width: "100%", background: "red" }}>Not Found</div>
       )}
       <h1>Cricket word Search</h1>
       <div className="container">
@@ -89,18 +143,17 @@ export default function App() {
           <input
             className="input"
             placeholder="Enter the word"
-            value={input}
-            onChange={(e) => setInput(e.target.value.toUpperCase())}
+            value={text}
+            // ref={text}
+            onChange={(e) => setText(e.target.value.toUpperCase())}
           />
-          <button onClick={() => handleCheck()}>Submit</button>
+          <button onClick={() => handleSubmit()}>Submit</button>
           <div className="box">
             {alphabet && (
               <GridBox
-                text={text}
                 alphabet={alphabet}
                 input={input}
-                match={match}
-                setMatch={setMatch}
+                wordColor={wordColor}
               />
             )}
           </div>
